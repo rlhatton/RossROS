@@ -85,7 +85,7 @@ class ConsumerProducer:
         self.name = name
 
     @log_on_start(DEBUG, "{self.name:s}: Starting consumer-producer service")
-    @log_on_error(DEBUG, "{self.name:s}: Encountered an error while closing down consumer-producer")
+    @log_on_error(DEBUG, "{self.name:s}: Encountered an error while executing consumer-producer")
     @log_on_end(DEBUG, "{self.name:s}: Closing down consumer-producer service")
     def __call__(self):
 
@@ -289,7 +289,7 @@ class Printer(Consumer):
                  delay=0,  # how many seconds to sleep for between printing data
                  termination_busses=default_termination_bus,  # busses to check for termination
                  name="Unnamed termination timer",  # name of this printer
-                 print_prefix="Unspecified prefix: "):  # prefix for output
+                 print_prefix="Unspecified printer: "):  # prefix for output
 
         super().__init__(
             self.print_bus,  # Printer class defines its own printing function

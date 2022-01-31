@@ -49,7 +49,10 @@ default_output_bus = Bus()
 
 
 def ensureTuple(value):
-    """ Function that wraps an input value in a tuple if it is not already a tuple"""
+    """
+    Function that wraps an input value in a tuple if it is not already a tuple
+    """
+    
     if isinstance(value, tuple):
         value_tuple = value
     else:

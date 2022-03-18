@@ -13,7 +13,7 @@ logging.basicConfig(format=logging_format, level=logging.INFO,
 
 class Bus:
     """
-    Class to allow a single element data bus.
+    Class for passing broadcast messages between processes.
     """
 
     def __init__(self,

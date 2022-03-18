@@ -19,7 +19,7 @@ class Bus:
     def __init__(self,
                  initial_message=0,
                  name="Unnamed Bus"):
-        
+
         self.message = initial_message
         self.name = name
 
@@ -43,12 +43,6 @@ class Bus:
 
         with self.lock.gen_wlock():
             self.message = message
-
-
-# Create a set of default input and output busses
-default_termination_bus = Bus(False)
-default_input_bus = Bus()
-default_output_bus = Bus()
 
 
 def ensureTuple(value):
@@ -77,10 +71,10 @@ class ConsumerProducer:
     @log_on_end(DEBUG, "{name:s}: Finished creating consumer-producer")
     def __init__(self,
                  consumer_producer_function,
-                 input_busses=default_input_bus,
-                 output_busses=default_output_bus,
+                 input_busses,
+                 output_busses,
                  delay=0,
-                 termination_busses=default_termination_bus,
+                 termination_busses=Bus(False, "Default consumer_producer termination bus"),
                  name="Unnamed consumer_producer"):
 
         self.consumer_producer_function = consumer_producer_function
@@ -188,11 +182,11 @@ class Producer(ConsumerProducer):
                  producer_function,
                  output_busses,
                  delay=0,
-                 termination_busses=default_termination_bus,
+                 termination_busses=Bus(False, "Default producer termination bus"),
                  name="Unnamed producer"):
 
         # Producers don't use an input bus
-        input_busses = default_input_bus
+        input_busses = Bus(0, "Default producer input bus")
 
         # Match naming convention for this class with its parent class
         # def syntax is necessary because a producer function will not accept
@@ -222,14 +216,14 @@ class Consumer(ConsumerProducer):
                  consumer_function,
                  input_busses,
                  delay=0,
-                 termination_busses=default_termination_bus,
+                 termination_busses=Bus(False, "Default consumer termination bus"),
                  name="Unnamed consumer"):
 
         # Match naming convention for this class with its parent class
         consumer_producer_function = consumer_function
 
         # Consumers don't use an output bus
-        output_busses = default_output_bus
+        output_busses = Bus(0, "Default consumer output bus")
 
         # Call the parent class init function
         super().__init__(
@@ -255,7 +249,7 @@ class Timer(Producer):
                  timer_busses,  # busses that should be set to true when timer triggers
                  duration=5,  # how many seconds the timer should run for (0 is forever)
                  delay=0,  # how many seconds to sleep for between checking time
-                 termination_busses=default_termination_bus,
+                 termination_busses=Bus(False, "Default timer termination bus"),
                  name="Unnamed termination timer"):
 
         super().__init__(
@@ -293,7 +287,7 @@ class Printer(Consumer):
     def __init__(self,
                  printer_bus,  # bus that should be printed to the terminal
                  delay=0,  # how many seconds to sleep for between printing data
-                 termination_busses=default_termination_bus,  # busses to check for termination
+                 termination_busses=Bus(False, "Default printer termination bus"),  # busses to check for termination
                  name="Unnamed termination timer",  # name of this printer
                  print_prefix="Unspecified printer: "):  # prefix for output
 

@@ -285,7 +285,7 @@ class Printer(Consumer):
     @log_on_error(DEBUG, "{name:s}: Encountered an error while creating printer")
     @log_on_end(DEBUG, "{name:s}: Finished creating printer")
     def __init__(self,
-                 printer_bus,  # bus that should be printed to the terminal
+                 printer_bus,  # bus or tuple of buses that should be printed to the terminal
                  delay=0,  # how many seconds to sleep for between printing data
                  termination_busses=Bus(False, "Default printer termination bus"),  # busses to check for termination
                  name="Unnamed termination timer",  # name of this printer
@@ -300,7 +300,10 @@ class Printer(Consumer):
 
         self.print_prefix = print_prefix
 
-    def print_bus(self, message):
+    def print_bus(self, *message):
+        output_string = self.print_prefix
+        for i in message:
+            output_string = output_string + " " + str(message[i])
         print(self.print_prefix + str(message))
 
 

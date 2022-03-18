@@ -1,12 +1,32 @@
 #!/usr/bin/python3
+"""
+This file demonstrates the basic operation of a RossROS program.
+
+First, it defines two signal-generator functions (a +/-1 square wave and a saw-tooth wave) and a
+function for multiplying two scalar values together.
+
+Second, it generates buses to hold the most-recently sampled values for the signal-generator functions,
+the product of the two signals, and a countdown timer determining how long the program should run
+
+Third, it wraps the signal-generator functions into RossROS Producer objects, and the multiplication
+function into a RossROS Consumer-Producer object.
+
+Fourth, it creates a RossROS Printer object to periodically display the current bus values, and a RossROS Timer
+object to terminate the program after a fixed number of seconds
+
+Fifth and finally, it makes a list of all of the RossROS objects and sends them to the runConcurrently function
+for simultaneous execution
+
+"""
 
 import rossros as rr
 import logging
 import time
 import math
 
-# Set the logging level to DEBUG
+# logging.getLogger().setLevel(logging.DEBUG)
 logging.getLogger().setLevel(logging.INFO)
+
 
 # Create two signal-generation functions
 
@@ -15,6 +35,7 @@ logging.getLogger().setLevel(logging.INFO)
 def square():
     return (2 * math.floor(time.time() % 2)) - 1
 
+
 # This function counts up from zero to 1 every second
 def sawtooth():
     return time.time() % 1  # "%" is the modulus operator
@@ -22,13 +43,13 @@ def sawtooth():
 
 # This function multiplies two inputs together
 def mult(a, b):
-    return a*b
+    return a * b
 
 
 # Initiate data and termination busses
 bSquare = rr.Bus(square(), "Square wave bus")
 bSawtooth = rr.Bus(sawtooth(), "Sawtooth wave Bus")
-bMultiplied = rr.Bus(sawtooth()*square(), "Multiplied wave bus")
+bMultiplied = rr.Bus(sawtooth() * square(), "Multiplied wave bus")
 bTerminate = rr.Bus(0, "Termination Bus")
 
 # Wrap the sawtooth wave signal generator into a producer
@@ -41,38 +62,38 @@ readSquare = rr.Producer(
 
 # Wrap the sawtooth wave signal generator into a producer
 readSawtooth = rr.Producer(
-    sawtooth,                  # function that will generate data
-    bSawtooth,                 # output data bus
-    0.05,                      # delay between data generation cycles
-    bTerminate,                # bus to watch for termination signal
+    sawtooth,  # function that will generate data
+    bSawtooth,  # output data bus
+    0.05,  # delay between data generation cycles
+    bTerminate,  # bus to watch for termination signal
     "Read sawtooth wave signal")
 
 # Wrap the multiplier function into a consumer-producer
 multiplyWaves = rr.ConsumerProducer(
-    mult,                           # function that will process data
-    (bSquare, bSawtooth),           # input data buses
-    bMultiplied,                    # output data bus
-    0.05,                             # delay between data control cycles
-    bTerminate,                     # bus to watch for termination signal
+    mult,  # function that will process data
+    (bSquare, bSawtooth),  # input data buses
+    bMultiplied,  # output data bus
+    0.05,  # delay between data control cycles
+    bTerminate,  # bus to watch for termination signal
     "Multiply Waves")
 
 # Make a printer that returns the most recent wave and product values
 printBuses = rr.Printer(
-    (bSquare, bSawtooth, bMultiplied, bTerminate),      # input data buses
-    #bMultiplied,      # input data buses
-    0.25,                                 # delay between printing cycles
-    bTerminate,                           # bus to watch for termination signal
-    "Print raw and derived data",        # Name of printer
-    "Data bus readings are: ")               # Prefix for output
+    (bSquare, bSawtooth, bMultiplied, bTerminate),  # input data buses
+    # bMultiplied,      # input data buses
+    0.25,  # delay between printing cycles
+    bTerminate,  # bus to watch for termination signal
+    "Print raw and derived data",  # Name of printer
+    "Data bus readings are: ")  # Prefix for output
 
 # Make a timer (a special kind of producer) that turns on the termination
 # bus when it triggers
 terminationTimer = rr.Timer(
-    bTerminate,                     # Output data bus
-    3,                              # Duration
-    0.01,                           # Delay between checking for termination time
-    bTerminate,                     # Bus to check for termination signal
-    "Termination timer")            # Name of this timer
+    bTerminate,  # Output data bus
+    3,  # Duration
+    0.01,  # Delay between checking for termination time
+    bTerminate,  # Bus to check for termination signal
+    "Termination timer")  # Name of this timer
 
 # Create a list of producer-consumers to execute concurrently
 producer_consumer_list = [readSquare,

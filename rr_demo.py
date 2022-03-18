@@ -28,7 +28,10 @@ import math
 logging.getLogger().setLevel(logging.INFO)
 
 
+""" First Part: Signal generation and processing functions """
+
 # Create two signal-generation functions
+
 
 # This function outputs a square wave that steps between +/- 1
 # every second
@@ -46,11 +49,15 @@ def mult(a, b):
     return a * b
 
 
+""" Second Part: Create buses for passing data """
+
 # Initiate data and termination busses
 bSquare = rr.Bus(square(), "Square wave bus")
 bSawtooth = rr.Bus(sawtooth(), "Sawtooth wave Bus")
 bMultiplied = rr.Bus(sawtooth() * square(), "Multiplied wave bus")
 bTerminate = rr.Bus(0, "Termination Bus")
+
+""" Third Part: Wrap signal generation and processing functions into RossROS objects """
 
 # Wrap the sawtooth wave signal generator into a producer
 readSquare = rr.Producer(
@@ -77,6 +84,8 @@ multiplyWaves = rr.ConsumerProducer(
     bTerminate,  # bus to watch for termination signal
     "Multiply Waves")
 
+""" Fourth Part: Create RossROS Printer and Timer objects """
+
 # Make a printer that returns the most recent wave and product values
 printBuses = rr.Printer(
     (bSquare, bSawtooth, bMultiplied, bTerminate),  # input data buses
@@ -94,6 +103,8 @@ terminationTimer = rr.Timer(
     0.01,  # Delay between checking for termination time
     bTerminate,  # Bus to check for termination signal
     "Termination timer")  # Name of this timer
+
+""" Fifth Part: Concurrent execution """
 
 # Create a list of producer-consumers to execute concurrently
 producer_consumer_list = [readSquare,

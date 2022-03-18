@@ -58,7 +58,7 @@ multiplyWaves = rr.ConsumerProducer(
 
 # Make a printer that returns the most recent wave and product values
 printBuses = rr.Printer(
-    (bSquare, bSawtooth, bMultiplied),      # input data buses
+    (bSquare, bSawtooth, bMultiplied, bTerminate),      # input data buses
     #bMultiplied,      # input data buses
     0.25,                                 # delay between printing cycles
     bTerminate,                           # bus to watch for termination signal

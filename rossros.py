@@ -163,10 +163,12 @@ class ConsumerProducer:
     def checkTerminationBusses(self):
 
         # Look at all of the termination busses
-        termination_values = self.collectBussesToValues(self.termination_busses)
+        termination_bus_values = self.collectBussesToValues(self.termination_busses)
 
-        # If any of the termination busses have triggered, signal the loop to end
-        return any(termination_values)
+        # If any of the termination busses have triggered (gone true or non-negative), signal the loop to end
+        for tbv in termination_bus_values:
+            if tbv and tbv >= 0:
+                return True
 
 
 class Producer(ConsumerProducer):
@@ -269,11 +271,11 @@ class Timer(Producer):
 
         # Trigger the timer if the duration is non-zero and the time elapsed
         # since instantiation is longer than the duration
-        if self.duration and (time.time() > (self.t_start + self.duration)):
-            print(self.name + ": DING!")
-            return True  # Marker that the timer has triggered
+        if self.duration:
+            time_relative_to_end_time = time.time() - self.t_start - self.duration
+            return time_relative_to_end_time
         else:
-            return False  # Marker that the timer has not yet triggered
+            return False
 
 
 class Printer(Consumer):

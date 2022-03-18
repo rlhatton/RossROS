@@ -16,7 +16,10 @@ class Bus:
     Class to allow a single element data bus.
     """
 
-    def __init__(self, initial_message=0, name="Unnamed Bus"):
+    def __init__(self,
+                 initial_message=0,
+                 name="Unnamed Bus"):
+        
         self.message = initial_message
         self.name = name
 
@@ -26,7 +29,7 @@ class Bus:
     @log_on_start(DEBUG, "{self.name:s}: Initiating read by {_name:s}")
     @log_on_error(DEBUG, "{self.name:s}: Error on read by {_name:s}")
     @log_on_end(DEBUG, "{self.name:s}: Finished read by {_name:s}")
-    def get_message(self, _name):
+    def get_message(self, _name='Unspecified function'):
 
         with self.lock.gen_rlock():
             message = self.message
@@ -36,7 +39,7 @@ class Bus:
     @log_on_start(DEBUG, "{self.name:s}: Initiating write by {_name:s}")
     @log_on_error(DEBUG, "{self.name:s}: Error on write by {_name:s}")
     @log_on_end(DEBUG, "{self.name:s}: Finished write by {_name:s}")
-    def set_message(self, message, _name):
+    def set_message(self, message, _name='Unspecified function'):
 
         with self.lock.gen_wlock():
             self.message = message

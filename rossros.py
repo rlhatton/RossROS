@@ -61,8 +61,8 @@ def ensureTuple(value):
 class ConsumerProducer:
     """
     Class that turns a provided function into a service that reads from
-    the input busses, stores the resulting data into the output busses,
-    and watches a set of termination busses for a "True" signal, at which
+    the input buses, stores the resulting data into the output buses,
+    and watches a set of termination buses for a "True" or non-negative signal, at which
     point the service shuts down
     """
 
@@ -71,17 +71,17 @@ class ConsumerProducer:
     @log_on_end(DEBUG, "{name:s}: Finished creating consumer-producer")
     def __init__(self,
                  consumer_producer_function,
-                 input_busses,
-                 output_busses,
+                 input_buses,
+                 output_buses,
                  delay=0,
-                 termination_busses=Bus(False, "Default consumer_producer termination bus"),
+                 termination_buses=Bus(False, "Default consumer_producer termination bus"),
                  name="Unnamed consumer_producer"):
 
         self.consumer_producer_function = consumer_producer_function
-        self.input_busses = ensureTuple(input_busses)
-        self.output_busses = ensureTuple(output_busses)
+        self.input_buses = ensureTuple(input_buses)
+        self.output_buses = ensureTuple(output_buses)
         self.delay = delay
-        self.termination_busses = ensureTuple(termination_busses)
+        self.termination_buses = ensureTuple(termination_buses)
         self.name = name
 
     @log_on_start(DEBUG, "{self.name:s}: Starting consumer-producer service")
@@ -92,58 +92,58 @@ class ConsumerProducer:
         while True:
 
             # Check if the loop should terminate
-            # termination_value = self.termination_busses[0].get_message(self.name)
-            if self.checkTerminationBusses():
+            # termination_value = self.termination_buses[0].get_message(self.name)
+            if self.checkTerminationbuses():
                 break
 
-            # Collect all of the values from the input busses into a list
-            input_values = self.collectBussesToValues(self.input_busses)
+            # Collect all of the values from the input buses into a list
+            input_values = self.collectbusesToValues(self.input_buses)
 
             # Get the output value or tuple of values corresponding to the inputs
             output_values = self.consumer_producer_function(*input_values)
 
-            # Deal the values into the output busses
-            self.dealValuesToBusses(output_values, self.output_busses)
+            # Deal the values into the output buses
+            self.dealValuesTobuses(output_values, self.output_buses)
 
             # Pause for set amount of time
             time.sleep(self.delay)
 
-    # Take in a bus or a tuple of busses, and store their
+    # Take in a bus or a tuple of buses, and store their
     # messages into a list
     @log_on_start(DEBUG, "{self.name:s}: Starting collecting bus values into list")
     @log_on_error(DEBUG, "{self.name:s}: Encountered an error while collecting bus values")
     @log_on_end(DEBUG, "{self.name:s}: Finished collecting bus values")
-    def collectBussesToValues(self, busses):
+    def collectbusesToValues(self, buses):
 
-        # Wrap busses in a tuple if it isn't one already
-        busses = ensureTuple(busses)
+        # Wrap buses in a tuple if it isn't one already
+        buses = ensureTuple(buses)
 
-        # Create a list for storing the values in the busses
+        # Create a list for storing the values in the buses
         values = []
 
-        # Loop over the busses, recording their values
-        for p in busses:
+        # Loop over the buses, recording their values
+        for p in buses:
             values.append(p.get_message(self.name))
 
         return values
 
-    # Take in  a tuple of values and a tuple of busses, and deal the values
-    # into the busses
-    @log_on_start(DEBUG, "{self.name:s}: Starting dealing values into busses")
-    @log_on_error(DEBUG, "{self.name:s}: Encountered an error while dealing values into busses")
-    @log_on_end(DEBUG, "{self.name:s}: Finished dealing values into busses")
-    def dealValuesToBusses(self, values, busses):
+    # Take in  a tuple of values and a tuple of buses, and deal the values
+    # into the buses
+    @log_on_start(DEBUG, "{self.name:s}: Starting dealing values into buses")
+    @log_on_error(DEBUG, "{self.name:s}: Encountered an error while dealing values into buses")
+    @log_on_end(DEBUG, "{self.name:s}: Finished dealing values into buses")
+    def dealValuesTobuses(self, values, buses):
 
-        # Wrap busses in a tuple if it isn't one already
-        busses = ensureTuple(busses)
+        # Wrap buses in a tuple if it isn't one already
+        buses = ensureTuple(buses)
 
         # Handle different combinations of bus and value counts
 
         # If there is only one bus, then the values should be treated as a
         # single entity, and wrapped into a tuple for the dealing process
-        if len(busses) == 1:
+        if len(buses) == 1:
             values = (values, )
-        # If there are multiple busses
+        # If there are multiple buses
         else:
             # If the values are already presented as a tuple, leave them
             if isinstance(values, tuple):
@@ -152,20 +152,20 @@ class ConsumerProducer:
             # Make a tuple with one entry per bus, all of which are the
             # equal to the input values
             else:
-                values = tuple([values]*len(busses))
+                values = tuple([values]*len(buses))
 
         for idx, v in enumerate(values):
-            busses[idx].set_message(v, self.name)
+            buses[idx].set_message(v, self.name)
 
-    @log_on_start(DEBUG, "{self.name:s}: Starting to check termination busses")
-    @log_on_error(DEBUG, "{self.name:s}: Encountered an error while checking termination busses")
-    @log_on_end(DEBUG, "{self.name:s}: Finished checking termination busses")
-    def checkTerminationBusses(self):
+    @log_on_start(DEBUG, "{self.name:s}: Starting to check termination buses")
+    @log_on_error(DEBUG, "{self.name:s}: Encountered an error while checking termination buses")
+    @log_on_end(DEBUG, "{self.name:s}: Finished checking termination buses")
+    def checkTerminationbuses(self):
 
-        # Look at all of the termination busses
-        termination_bus_values = self.collectBussesToValues(self.termination_busses)
+        # Look at all of the termination buses
+        termination_bus_values = self.collectbusesToValues(self.termination_buses)
 
-        # If any of the termination busses have triggered (gone true or non-negative), signal the loop to end
+        # If any of the termination buses have triggered (gone true or non-negative), signal the loop to end
         for tbv in termination_bus_values:
             if tbv and tbv >= 0:
                 return True
@@ -173,7 +173,7 @@ class ConsumerProducer:
 
 class Producer(ConsumerProducer):
     """
-    Special case of the consumer-producer class, that sends values to busses
+    Special case of the consumer-producer class, that sends values to buses
     but does not read them
     """
 
@@ -182,13 +182,13 @@ class Producer(ConsumerProducer):
     @log_on_end(DEBUG, "{name:s}: Finished creating producer")
     def __init__(self,
                  producer_function,
-                 output_busses,
+                 output_buses,
                  delay=0,
-                 termination_busses=Bus(False, "Default producer termination bus"),
+                 termination_buses=Bus(False, "Default producer termination bus"),
                  name="Unnamed producer"):
 
         # Producers don't use an input bus
-        input_busses = Bus(0, "Default producer input bus")
+        input_buses = Bus(0, "Default producer input bus")
 
         # Match naming convention for this class with its parent class
         # def syntax is necessary because a producer function will not accept
@@ -198,16 +198,16 @@ class Producer(ConsumerProducer):
         # Call the parent class init function
         super().__init__(
             consumer_producer_function,
-            input_busses,
-            output_busses,
+            input_buses,
+            output_buses,
             delay,
-            termination_busses,
+            termination_buses,
             name)
 
 
 class Consumer(ConsumerProducer):
     """
-    Special case of the consumer-producer class, that reads values from busses
+    Special case of the consumer-producer class, that reads values from buses
     but does not send to them
     """
 
@@ -216,49 +216,50 @@ class Consumer(ConsumerProducer):
     @log_on_end(DEBUG, "{name:s}: Finished creating consumer")
     def __init__(self,
                  consumer_function,
-                 input_busses,
+                 input_buses,
                  delay=0,
-                 termination_busses=Bus(False, "Default consumer termination bus"),
+                 termination_buses=Bus(False, "Default consumer termination bus"),
                  name="Unnamed consumer"):
 
         # Match naming convention for this class with its parent class
         consumer_producer_function = consumer_function
 
         # Consumers don't use an output bus
-        output_busses = Bus(0, "Default consumer output bus")
+        output_buses = Bus(0, "Default consumer output bus")
 
         # Call the parent class init function
         super().__init__(
             consumer_producer_function,
-            input_busses,
-            output_busses,
+            input_buses,
+            output_buses,
             delay,
-            termination_busses,
+            termination_buses,
             name)
 
 
 class Timer(Producer):
     """
     Timer is a producer that keeps track of time since it was instantiated
-    and sets its output busses to True once the elapsed time is longer than its
-    "duration" parameter
+    Time is instantiated with a duration value, and writes a "countdown" value (time before or after the
+    specified duration) to its output bus. The output bus can be used as the termination bus for other
+    consumer-producers (and for the timer itself); these consumer producers will terminate when the timer reaches zero
     """
 
     @log_on_start(DEBUG, "{name:s}: Starting to create timer")
     @log_on_error(DEBUG, "{name:s}: Encountered an error while creating timer")
     @log_on_end(DEBUG, "{name:s}: Finished creating timer")
     def __init__(self,
-                 timer_busses,  # busses that should be set to true when timer triggers
+                 output_buses,  # buses that receive the countdown value
                  duration=5,  # how many seconds the timer should run for (0 is forever)
                  delay=0,  # how many seconds to sleep for between checking time
-                 termination_busses=Bus(False, "Default timer termination bus"),
+                 termination_buses=Bus(False, "Default timer termination bus"),
                  name="Unnamed termination timer"):
 
         super().__init__(
             self.timer,  # Timer class defines its own producer function
-            timer_busses,
+            output_buses,
             delay,
-            termination_busses,
+            termination_buses,
             name)
 
         self.duration = duration
@@ -289,7 +290,7 @@ class Printer(Consumer):
     def __init__(self,
                  printer_bus,  # bus or tuple of buses that should be printed to the terminal
                  delay=0,  # how many seconds to sleep for between printing data
-                 termination_busses=Bus(False, "Default printer termination bus"),  # busses to check for termination
+                 termination_buses=Bus(False, "Default printer termination bus"),  # buses to check for termination
                  name="Unnamed termination timer",  # name of this printer
                  print_prefix="Unspecified printer: "):  # prefix for output
 
@@ -297,7 +298,7 @@ class Printer(Consumer):
             self.print_bus,  # Printer class defines its own printing function
             printer_bus,
             delay,
-            termination_busses,
+            termination_buses,
             name)
 
         self.print_prefix = print_prefix

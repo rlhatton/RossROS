@@ -300,11 +300,23 @@ class Printer(Consumer):
 
         self.print_prefix = print_prefix
 
-    def print_bus(self, *message):
-        output_string = self.print_prefix
-        for i in message:
-            output_string = output_string + " " + str(message[i])
-        print(self.print_prefix + str(message))
+    def print_bus(self, *messages):
+        output_string = self.print_prefix                  # Start the output string with the print prefix
+        for msg in messages:                               # Append bus messages to the output
+
+            if isinstance(msg, str):                       # If the message is a string, leave it as it is
+                msg_str = msg
+            else:                                          # If it's not a string, assume it's a number and convert it
+                msg_str = str("{0:.4g}".format(msg))       # Convert to string with 4 significant figures
+                if msg >= 0:                               # Append a space before the value if it is not negative
+                    msg_str = " " + msg_str
+
+            output_string = output_string + " " + msg_str  # Append the message string to the output string
+
+            for i in range(1, 12 - len(msg_str)):          # Add spacing to put the outputs into columns
+                output_string = output_string + " "
+
+        print(output_string)                               # Print the formatted output
 
 
 @log_on_start(DEBUG, "runConcurrently: Starting concurrent execution")

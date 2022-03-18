@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-This file demonstrates the basic operation of a RossROS program.
+This file demonstrates the basic operation of a RossROS program using asyncio instead of concurrent_futures
 
 First, it defines two signal-generator functions (a +/-1 square wave and a saw-tooth wave) and a
 function for multiplying two scalar values together.
@@ -107,11 +107,11 @@ terminationTimer = rr.Timer(
 """ Fifth Part: Concurrent execution """
 
 # Create a list of producer-consumers to execute concurrently
-producer_consumer_list = [readSquare(),
-                          readSawtooth(),
-                          multiplyWaves(),
-                          printBuses(),
-                          terminationTimer()]
+producer_consumer_list = [readSquare,
+                          readSawtooth,
+                          multiplyWaves,
+                          printBuses,
+                          terminationTimer]
 
 # Execute the list of producer-consumers concurrently
 rr.runConcurrently(producer_consumer_list)

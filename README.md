@@ -1,8 +1,8 @@
 # RossROS
 
-RossROS is a minimal robot operating system written in Python.
+RossROS is a minimal robot operating system designed to teach principles of concurrent interactions between sensing, processing and acting elements of a system.
 
-## Why RossROS?
+## Why Use RossROS?
 
 RossROS is a lightweight means of setting up a set of multitasked processes, passing messages with a publish-subscribe model (conceptually similar to the "topics" model used in ROS). Its design is targeted at two main educational use-cases:
 
@@ -26,7 +26,7 @@ RossROS additionally provides several additional classes derived from the consum
 
 * Timers are producers that count down to a future time. Tying their output to the termination bus monitored by another consumer-producer is a convenient way to set the consumer-producer to run for a fixed length of time.
 
-* Printers are consumers that display the current values held by a set of buses.
+* Printers are consumers that display the current values held by a bus or set of buses.
 
 ## Using RossROS
 

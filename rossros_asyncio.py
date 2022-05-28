@@ -19,7 +19,7 @@ the threading architecture from concurrent.futures).
 
 While running RossROS AsyncIO, you can include calls to "await.sleep" within the consumer and producer functions
 (but note that any such calls will stack with the loop delay time, so that you should decrease the loop delay
-to keep the same overall execution frequency
+to keep the same overall execution frequency).
 
 --
 

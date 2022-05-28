@@ -59,7 +59,7 @@ bTerminate = rr.Bus(0, "Termination Bus")
 
 """ Third Part: Wrap signal generation and processing functions into RossROS objects """
 
-# Wrap the sawtooth wave signal generator into a producer
+# Wrap the square wave signal generator into a producer
 readSquare = rr.Producer(
     square,  # function that will generate data
     bSquare,  # output data bus

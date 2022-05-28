@@ -10,6 +10,17 @@ RossROS is a lightweight means of setting up a set of multitasked processes, pas
 
 * An introduction to multitasked programming itself: "Implement a basic version of RossROS" is a feasible assignment that exposes students to the core concepts of how multitasked systems work. Within a "system stack" robotics class, this provides students with a mental model for multitasking and some "hands-on" experience with such code, but without requiring the depth and extent of coverage typically seen when multitasking is covered in a traditional "programming" class.
 
+## Provided Files
+
+The core RossROS functionality is provided in rossros.py, with an example of code using the library provided in rossros_demo.py. An alternative implementation (using cooperative multitasking) is provided as rossros_asyncio.py, and demonstrated in rossros_asyncio_demo.py. 
+
+Documentation for RossROS is provided in:
+* This Readme
+* Comments in the Python files
+* RossROS_Design_and_Teaching.pdf, which contains notes on the principles which motivated the design of the code and suggested programming tasks for implementing RossROS from scratch as a learning exercise
+
+
+
 ## Components
 
 The core components of RossROS are two python classes -- message buses and consumer-producers. 
@@ -47,9 +58,9 @@ The file rr_demo.py provides a commented example of this process.
 
 ## Pre-emptive and cooperative multitasking
 
-The core rossros.py module uses pre-emptive multitasking, implemented via the concurrent.futures Python package.
+The core rossros.py library uses pre-emptive multitasking, implemented via the concurrent.futures Python package.
 
-An alternative module, rossros_asyncio.py, instead uses cooperative multitasking, implemented via the asyncio Python package.
+An alternative library, rossros_asyncio.py, instead uses cooperative multitasking, implemented via the asyncio Python package.
 
 Systems set up with rossros.py should be able to seamlessly transition to using rossros_asyncio.py simply by changing the relevant "import" line in the code, and it can be instructive to compare the behavior of the system under the two approaches to multitasking.
 

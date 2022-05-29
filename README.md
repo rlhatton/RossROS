@@ -4,7 +4,7 @@ RossROS is a minimal robot operating system designed to teach principles of conc
 
 ## Why Use RossROS?
 
-RossROS is a lightweight means of setting up a set of multitasked processes, passing messages with a publish-subscribe model (conceptually similar to the "topics" model used in ROS). Its design is targeted at two main educational use-cases:
+RossROS is a lightweight means of constructing a set of multitasked processes, passing messages with a publish-subscribe model (conceptually similar to the "topics" model used in ROS). Its design is targeted at two main educational use-cases:
 
 * Direct use in an educational setting: RossROS allows programs written as monolithic sense-think-act loops (e.g., basic line following algorithms) to be easily converted into pre-emptive or cooperative multitasked programs. This conversion then supports further instruction in more complex control architectures using a simpler syntax and less implementation overhead than would be required for a full ROS install.
 
